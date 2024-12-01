@@ -1,0 +1,87 @@
+string _add(const string& a, const string& b)
+{
+    string sum;
+    int maxl = max(a.size(), b.size());
+    vector<int> na(maxl, 0), nb(maxl, 0), ans(maxl + 1, 0);
+    for (int i = 0; i < a.size(); i++) {
+        na[a.size() - 1 - i] = a[i] - '0';
+    }
+    for (int i = 0; i < b.size(); i++) {
+        nb[b.size() - 1 - i] = b[i] - '0';
+    }
+    for (int i = 0; i < maxl; i++) {
+        int sum_digit = na[i] + nb[i] + ans[i];
+        ans[i] = sum_digit % 10;
+        ans[i + 1] = sum_digit / 10;
+    }
+    if (ans[maxl] != 0) {
+        sum += '1';
+    }
+    for (int i = maxl - 1; i >= 0; i--) {
+        sum += ans[i] + '0';
+    }
+    return sum;
+}
+
+
+string _subtract(const string& a, const string& b)
+{
+    string diff;
+    int maxl = max(a.size(), b.size());
+    vector<int> na(maxl + 1, 0), nb(maxl + 1, 0), ans(maxl + 1, 0);
+    for (int i = a.size(); i > 0; i--) na[i] = a[a.size() - i] - '0';
+    for (int i = b.size(); i > 0; i--) nb[i] = b[b.size() - i] - '0';
+    if ((a < b && a.size() <= b.size()) || b.size() > a.size())
+        return "-" + _subtract(b, a);
+    for (int i = 1; i <= maxl; i++){
+        if (na[i] < nb[i]){
+            na[i + 1]--;
+            na[i] += 10;
+        }
+        ans[i] = na[i] - nb[i];
+    }
+    while (ans[maxl] == 0 && maxl > 1) maxl--;
+    if (maxl < 1) return "0";
+    for (int i = maxl; i > 0; i--) diff += ans[i] + '0';
+    return diff;
+}
+
+
+string _multiply(const string& a1, const string& b1) {
+    bool isNegative = false;
+    string a = a1, b = b1;
+    if (a[0] == '-') {
+        isNegative = !isNegative;
+        a = a.substr(1);
+    }
+    if (b[0] == '-') {
+        isNegative = !isNegative;
+        b = b.substr(1);
+    }
+    int lena = a.length();
+    int lenb = b.length();
+    vector<int> a_digits(lena), b_digits(lenb), c(lena + lenb, 0);
+    for (int i = 0; i < lena; i++) a_digits[i] = a[lena - 1 - i] - '0';
+    for (int i = 0; i < lenb; i++) b_digits[i] = b[lenb - 1 - i] - '0';
+    for (int i = 0; i < lenb; i++) {
+        for (int j = 0; j < lena; j++) {
+            c[i + j] += a_digits[j] * b_digits[i];
+        }
+    }
+    for (int i = 0; i < c.size(); i++) {
+        if (c[i] > 9) {
+            c[i + 1] += c[i] / 10;
+            c[i] %= 10;
+        }
+    }
+    int len = c.size() - 1;
+    while (len > 0 && c[len] == 0) len--;
+    string result = "";
+    for (int i = len; i >= 0; i--) {
+        result += to_string(c[i]);
+    }
+    if (isNegative && result != "0") {
+        result = "-" + result;
+    }
+    return result;
+}
