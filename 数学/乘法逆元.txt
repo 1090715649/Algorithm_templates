@@ -1,0 +1,29 @@
+// 计算 a 在模 m 下的乘法逆元
+// 返回值: 如果逆元存在，返回逆元；如果不存在，返回-1
+long long mod_inverse(long long a, long long m) {
+    long long x = 1, y = 0;
+    long long x1 = 0, y1 = 1;
+    long long a1 = a, m1 = m;
+    // 扩展欧几里得算法
+    while (m1) {
+        long long q = a1 / m1;
+        long long temp = x1;
+        x1 = x - q * x1;
+        x = temp;
+
+        temp = y1;
+        y1 = y - q * y1;
+        y = temp;
+
+        temp = m1;
+        m1 = a1 - q * m1;
+        a1 = temp;
+    }
+    // 检查是否存在逆元
+    if (a1 != 1) {
+        return -1;  // 逆元不存在
+    }
+    // 确保返回的是最小正逆元
+    x = (x % m + m) % m;
+    return x;
+}
